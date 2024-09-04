@@ -1,10 +1,11 @@
-import { Context, Time, segment, Schema, Quester } from 'koishi'
+import { Context, h, Schema } from 'koishi'
 import { readFile, writeFile } from 'fs/promises'
+import { join } from 'path'
 
 export const name = 'emojimix'
 export interface Config {
-  emojiEndpoint?: string;
-  mixDataEndpoint?: string;
+  emojiEndpoint?: string
+  mixDataEndpoint?: string
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -29,13 +30,17 @@ interface Data {
 }
 
 export async function apply(ctx: Context, config: Config) {
-  let emojis: Data = await readFile('../data.json', 'utf-8').then(data => JSON.parse(data))
+  const logger = ctx.logger('emojimix')
+  const path = join(__dirname, '..', 'data.json')
+  let emojis: Data = await readFile(path, 'utf-8').then(data => JSON.parse(data))
   ctx.http.get(config.mixDataEndpoint).then(data => {
-    writeFile('../data.json', data, 'utf-8')
+    writeFile(path, data, 'utf-8')
     emojis = JSON.parse(data)
-  }).catch(ctx.logger.warn)
+  }).catch((e) => {
+    logger.warn(e)
+  })
 
-  ctx.command("emojimix [emoji1] [emoji2]", "输出两个emoji的混合图片").action(async (_, e1, e2) => {
+  ctx.command('emojimix [emoji1] [emoji2]', '输出两个emoji的混合图片').action(async (_, e1, e2) => {
     if (e1 && !/\p{Emoji}/u.test(e1)) return `${e1}不是emoji`
     if (e2 && !/\p{Emoji}/u.test(e2)) return `${e2}不是emoji`
 
@@ -48,15 +53,17 @@ export async function apply(ctx: Context, config: Config) {
 
     while (true) {
       try {
-        if (e1)
-          codePoint1 = getCodePoint(e1)
-        else
-          codePoint1 = Object.keys(emojis)[Math.floor(Math.random() * Object.keys(emojis).length)]
+        if (e1) { 
+          codePoint1 = getCodePoint(e1) 
+        } else {
+          codePoint1 = Object.keys(emojis)[Math.floor(Math.random() * Object.keys(emojis).length)] 
+        }
         emoji1 = emojis[codePoint1]
-        if (e2)
-          codePoint2 = getCodePoint(e2)
-        else
-          codePoint2 = Object.keys(emoji1)[Math.floor(Math.random() * Object.keys(emoji1).length)]
+        if (e2) { 
+          codePoint2 = getCodePoint(e2) 
+        } else {
+          codePoint2 = Object.keys(emoji1)[Math.floor(Math.random() * Object.keys(emoji1).length)] 
+        }
         date = emoji1[codePoint2]
 
         url = `${config.emojiEndpoint}${date}/${codePoint1}/${codePoint1}_${codePoint2}.png`
@@ -74,6 +81,6 @@ export async function apply(ctx: Context, config: Config) {
       }
     }
 
-    return `${codePointsToEmoji(codePoint1)}+${codePointsToEmoji(codePoint2)}=${segment("image", { url: url })}`
+    return `${codePointsToEmoji(codePoint1)}+${codePointsToEmoji(codePoint2)}=${h('image', { url })}`
   })
 }

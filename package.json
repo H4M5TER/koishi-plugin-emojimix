@@ -1,7 +1,7 @@
 {
   "name": "@h4m5ter/koishi-plugin-emojimix",
   "description": "Emojimix Plugin for Koishi",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -25,6 +25,6 @@
   ],
   "homepage": "https://github.com/h4m5ter/koishi-plugin-emojimix",
   "peerDependencies": {
-    "koishi": "^4.17.11"
+    "koishi": "^4.17.12"
   }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "koishi-plugin-emojimix",
+  "name": "@h4m5ter/koishi-plugin-emojimix",
   "description": "Emojimix Plugin for Koishi",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -11,21 +11,20 @@
   ],
   "license": "MIT",
   "author": "Univeous <univeous@gmail.com>",
-  "scripts": {},
+  "maintainers": [
+    {
+      "name": "H4M5TER",
+      "url": "https://github.com/h4m5ter",
+      "email": "zhuxx2003@gmail.com"
+    }
+  ],
   "keywords": [
     "chatbot",
     "koishi",
     "plugin"
   ],
-  "homepage": "https://github.com/univeous/koishi-plugin-emojimix",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/univeous/koishi-plugin-emojimix.git"
-  },
-  "bugs": {
-    "url": "https://github.com/univeous/koishi-plugin-emojimix/issues"
-  },
+  "homepage": "https://github.com/h4m5ter/koishi-plugin-emojimix",
   "peerDependencies": {
-    "koishi": "^4.0.0"
+    "koishi": "^4.17.11"
   }
 }

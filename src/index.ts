@@ -5,13 +5,11 @@ export const name = 'emojimix'
 export interface Config {
   emojiEndpoint?: string;
   mixDataEndpoint?: string;
-  quester: Quester.Config;
 }
 
 export const Config: Schema<Config> = Schema.object({
   emojiEndpoint: Schema.string().default('https://www.gstatic.com/android/keyboard/emojikitchen/'),
   mixDataEndpoint: Schema.string().default('https://github.com/univeous/koishi-plugin-emojimix/raw/master/data.json').description('emoji 混合数据的 endpoint 。'),
-  quester: Quester.Config,
 })
 
 function getCodePoint(emoji: string) {
@@ -30,15 +28,12 @@ interface Data {
   [emoji1: string]: { [emoji2: string]: string }
 }
 
-export async function apply(context: Context, config: Config) {
-  const ctx = context.isolate('http')
-  ctx.http = context.http.extend(config.quester)
-
+export async function apply(ctx: Context, config: Config) {
   let emojis: Data = await readFile('../data.json', 'utf-8').then(data => JSON.parse(data))
   ctx.http.get(config.mixDataEndpoint).then(data => {
     writeFile('../data.json', data, 'utf-8')
     emojis = JSON.parse(data)
-  })
+  }).catch(ctx.logger.warn)
 
   ctx.command("emojimix [emoji1] [emoji2]", "输出两个emoji的混合图片").action(async (_, e1, e2) => {
     if (e1 && !/\p{Emoji}/u.test(e1)) return `${e1}不是emoji`
